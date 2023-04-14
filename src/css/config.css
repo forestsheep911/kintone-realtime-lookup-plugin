@@ -2,24 +2,31 @@
   font-size: 1.8em;
 }
 
-.kintoneplugin-input-text {
-  width: 20em;
-}
-
 .config-check-box {
   width: 1.2em;
   height: 1.2em;
 }
 
-.toggleWrapper {
+.config-row {
+  height: 4.6em;
+}
+
+.lookup-field-name-text-parent {
   position: relative;
-  top: 50%;
-  left: 50%;
+  top: -0.64em;
+  margin-left: 1.2em;
+}
+
+.lookup-field-name-text {
+  font-size: 1.5em;
+}
+
+.toggle-wrapper {
   overflow: hidden;
   transform: translate3d(-50%, -50%, 0);
 }
 
-.toggleWrapper input {
+.toggle-wrapper input {
   position: absolute;
   left: -99em;
 }
