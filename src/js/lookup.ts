@@ -2,7 +2,11 @@
 /* eslint-disable no-debugger */
 import { KintoneRestAPIClient } from '@kintone/rest-api-client'
 
-export type Lookup = { label: string; code: string; lookup: object }
+export type Lookup = {
+  label: string
+  code: string
+  lookup: object
+}
 const client = new KintoneRestAPIClient({
   baseUrl: 'https://cndevqpofif.cybozu.cn',
 })

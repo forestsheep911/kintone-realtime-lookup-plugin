@@ -27,41 +27,42 @@ import { getFormSetting, Lookup } from './lookup.ts'
 // type LookupC = { label: string; code: string; lookup: object; checked?: boolean }
 
 const props = defineProps<{ pluginId: string }>()
-const data: { config: Lookup[]; saveConfig: Array<{ label: string; checked: boolean }> } = reactive({
+const data: { config: Lookup[]; saveConfig: Array<{ label: string; checked: boolean; code: string }> } = reactive({
   config: [],
   saveConfig: [],
 })
 onMounted(async () => {
   const gettedConfig = kintone.plugin.app.getConfig(props.pluginId)
-  console.log(typeof gettedConfig)
-  console.log(gettedConfig)
-  console.log(gettedConfig.setting)
-  console.log(JSON.parse(gettedConfig.setting))
+  // console.log(typeof gettedConfig)
+  // console.log(gettedConfig)
+  // console.log(gettedConfig.setting)
+  data.saveConfig = JSON.parse(gettedConfig.setting)
   const res: Lookup[] = await getFormSetting()
-  console.log(res[0].label)
   // console.log(res[1].label)
   // console.log(res.length)
   // console.log({ gettedConfig }.setting.length)
   // const parsedConfig = JSON.parse(gettedConfig) as { setting: Array<{ label: string; checked: boolean }> }
   // console.log({ gettedConfig })
-  // console.log(res.length)
+  console.log(res)
 
-  // const cp = res.map((i) => {
-  //   for (let j = 0; j < parsedConfig.setting.length; j += 1) {
-  //     // console.log(i.label)
-  //     // console.log(gettedConfig.setting[j].label)
-  //     if (parsedConfig.setting[j].label === i.label) {
-  //       return { label: i.label, checked: true }
-  //     }
-  //   }
-  //   return { label: i.label, checked: false }
-  // })
-  // eslint-disable-next-line require-atomic-updates
+  const cp = res.map((i) => {
+    for (let j = 0; j < data.saveConfig.length; j += 1) {
+      // console.log('res', i.label)
+      // console.log('save', data.saveConfig[j].label)
+      if (data.saveConfig[j].code === i.code) {
+        return { code: i.code, label: i.label, checked: data.saveConfig[j].checked }
+      }
+    }
+    return { code: i.code, label: i.label, checked: false }
+  })
+  console.log(cp)
   data.saveConfig = cp
+  // eslint-disable-next-line require-atomic-updates
+  // data.saveConfig = cp
 })
 
 function save() {
-  kintone.plugin.app.setConfig({ setting: JSON.stringify([{ label: 'lookup' }, { label: 'none' }]) })
+  kintone.plugin.app.setConfig({ setting: JSON.stringify(data.saveConfig) })
 }
 
 function cancel() {

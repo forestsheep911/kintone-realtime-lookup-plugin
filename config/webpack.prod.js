@@ -14,12 +14,12 @@ module.exports = merge(common, {
   ],
   optimization: {
     minimizer: [
-      new TerserPlugin({
-        extractComments: false,
-        terserOptions: {
-          compress: { pure_funcs: ['console.log'] },
-        },
-      }),
+      // new TerserPlugin({
+      //   extractComments: false,
+      //   terserOptions: {
+      //     compress: { pure_funcs: ['console.log'] },
+      //   },
+      // }),
       new CssMinimizerPlugin({
         minimizerOptions: {
           preset: [
