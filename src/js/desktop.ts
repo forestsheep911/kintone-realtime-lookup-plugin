@@ -88,16 +88,18 @@ kintone.events.on('app.record.detail.show', async (event: KintoneEvent) => {
             const oneele = (kintone.app.record.getFieldElement(mapping.field) as HTMLElement).firstChild
             if (!oneele || !oneele.textContent) return null
             const overwriteValue = targetRecord?.record[mapping.relatedField].value
-            if (overwriteValue instanceof Array) {
-              const firstItem = overwriteValue[0] as { name: string }
-              if (firstItem && 'name' in firstItem) {
-                oneele.textContent = firstItem.name
-                return null
-              }
+            // if (overwriteValue instanceof Array) {
+            //   const firstItem = overwriteValue[0] as { name: string }
+            //   if (firstItem && 'name' in firstItem) {
+            //     oneele.textContent = firstItem.name
+            //     return null
+            //   }
+            // }
+            if (overwriteValue instanceof String) {
+              oneele.textContent = overwriteValue as string
             }
             console.log(typeof overwriteValue)
             console.log(overwriteValue)
-            oneele.textContent = overwriteValue as string
             return null
           })
         }
