@@ -85,21 +85,16 @@ kintone.events.on('app.record.detail.show', async (event: KintoneEvent) => {
           // 写在这个if下的原因是，如果lookup的值不是参照来的，那为了数据一致性，其他要赋值的字段最好也不要显示参照的值
           console.log(els.lookup.fieldMappings)
           els.lookup.fieldMappings.map((mapping) => {
-            const oneele = (kintone.app.record.getFieldElement(mapping.field) as HTMLElement).firstChild
-            if (!oneele || !oneele.textContent) return null
+            // 拿到参照字段的元素
+            const refEl = (kintone.app.record.getFieldElement(mapping.field) as HTMLElement).firstChild
+            if (!refEl || !refEl.textContent) return null
+            // 拿到要复制的值
             const overwriteValue = targetRecord?.record[mapping.relatedField].value
-            // if (overwriteValue instanceof Array) {
-            //   const firstItem = overwriteValue[0] as { name: string }
-            //   if (firstItem && 'name' in firstItem) {
-            //     oneele.textContent = firstItem.name
-            //     return null
-            //   }
-            // }
+            // 判断一下需要复制的值是什么类型的，一般是文本框之类的都是String
+            // 但是如果是用户选择类型之类的话，就需要根据具体情况，特殊设计了
             if (overwriteValue instanceof String) {
-              oneele.textContent = overwriteValue as string
+              refEl.textContent = overwriteValue as string
             }
-            console.log(typeof overwriteValue)
-            console.log(overwriteValue)
             return null
           })
         }
