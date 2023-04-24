@@ -10,13 +10,6 @@ const pid = kintone.$PLUGIN_ID
 const client = new KintoneRestAPIClient({
   baseUrl: 'https://cndevqpofif.cybozu.cn',
 })
-kintone.events.on('app.record.index.show', (event: KintoneEvent) => {
-  const config = kintone.plugin.app.getConfig(pid)
-  const spaceElement = kintone.app.getHeaderSpaceElement() as HTMLElement
-  const app = createApp(DesktopApp, { msg: config.message })
-  app.mount(spaceElement)
-  return event
-})
 
 kintone.events.on('app.record.edit.submit', (event: KintoneEvent) => {
   return event
@@ -38,12 +31,12 @@ type SpecificLookup = Lookup & {
  * @returns
  */
 async function getTargetRecord(targetApp: string, hle: HTMLAnchorElement) {
-  const targetRecordId = (hle.href.match(/record=(\d)/) as string[])[1]
+  const targetRecordId = (hle.href.match(/record=(\d+)/) as string[])[1]
   const targetRecord = await client.record.getRecord({ app: targetApp, id: targetRecordId })
   return targetRecord
 }
 
-kintone.events.on('app.record.detail.show', async (event: KintoneEvent) => {
+kintone.events.on('app.record.detail.show', async (event) => {
   // 先拿到插件的设定，表示哪些lookup字段需要适用实时参照功能
   const savedConfig: Array<{ label: string; checked: boolean; code: string }> = JSON.parse(
     kintone.plugin.app.getConfig(pid).setting,
@@ -87,18 +80,53 @@ kintone.events.on('app.record.detail.show', async (event: KintoneEvent) => {
           els.lookup.fieldMappings.map((mapping) => {
             // 拿到参照字段的元素
             const refEl = (kintone.app.record.getFieldElement(mapping.field) as HTMLElement).firstChild
+            console.log(refEl)
             if (!refEl || !refEl.textContent) return null
             // 拿到要复制的值
             const overwriteValue = targetRecord?.record[mapping.relatedField].value
-            // 判断一下需要复制的值是什么类型的，一般是文本框之类的都是String
+            // 判断一下需要复制的值是什么类型的，一般是文本框之类的都是string
             // 但是如果是用户选择类型之类的话，就需要根据具体情况，特殊设计了
-            if (overwriteValue instanceof String) {
+            if (typeof overwriteValue === 'string') {
               refEl.textContent = overwriteValue as string
             }
             return null
           })
         }
       }
+    }
+  }
+  return event
+})
+
+kintone.events.on('app.record.index.show', async (event) => {
+  // const config = kintone.plugin.app.getConfig(pid)
+  const spaceElement = kintone.app.getHeaderSpaceElement() as HTMLElement
+  const app = createApp(DesktopApp, { c: 'abcedfg' })
+  app.mount(spaceElement)
+  const savedConfig: Array<{ label: string; checked: boolean; code: string }> = JSON.parse(
+    kintone.plugin.app.getConfig(pid).setting,
+  )
+  const lookupSetting: SpecificLookup[] = (await getFormSetting()) as SpecificLookup[]
+  const enabledLookupSetting = savedConfig.map((i) => {
+    for (let j = 0; j < lookupSetting.length; j += 1) {
+      if (i.checked && lookupSetting[j].code === i.code) {
+        return lookupSetting[j]
+      }
+    }
+    return undefined
+  })
+  for (let i = 0; i < enabledLookupSetting.length; i += 1) {
+    const els = enabledLookupSetting[i]
+    if (els) {
+      const code = els.code as string
+      const tdEls = kintone.app.getFieldElements(code)
+      tdEls?.map(async (tdEl) => {
+        const anchorEl = tdEl.querySelector('a') as HTMLAnchorElement
+        const targetRecord = await getTargetRecord(els.lookup.relatedApp.app, anchorEl)
+        console.log(targetRecord)
+        anchorEl?.textContent &&
+          (anchorEl.textContent = targetRecord?.record[els.lookup.relatedKeyField].value as string)
+      })
     }
   }
   return event

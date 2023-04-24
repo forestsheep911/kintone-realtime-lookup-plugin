@@ -5,7 +5,6 @@ declare namespace kintone {
 declare namespace kintone.types {
   interface Fields {}
   interface SavedFields extends Fields {
-    // kcAddressNameRef: kintone.fieldTypes.SingleLineText
     [key: string]: { type: string; value: string | number | boolean }
     $id: kintone.fieldTypes.Id
     $revision: kintone.fieldTypes.Revision

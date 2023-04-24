@@ -1,22 +1,16 @@
 <template>
-  <div>
-    <h3 class="plugin-space-heading">Hello kintone plugin!</h3>
-    <p class="plugin-space-message">{{ msg }}</p>
-  </div>
+  <span class="toggle-wrapper">
+    <input id="sw" v-model="refOnOff" type="checkbox" />
+    <label class="toggle" for="sw"><span class="toggle-handler"></span></label>
+  </span>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'DesktopApp',
-  props: {
-    msg: {
-      type: String,
-      default: '',
-    },
-  },
-}
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const refOnOff = ref(true)
 </script>
 
 <style>
-@import '../css/desktop.css';
+@import '../css/config.css';
 </style>
