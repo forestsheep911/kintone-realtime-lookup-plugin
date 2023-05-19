@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 import { KintoneRestAPIClient } from '@kintone/rest-api-client'
-import { createApp } from 'vue'
+// import { createApp } from 'vue'
 import { getFormSetting, Lookup } from './lookup.ts'
-import DesktopApp from './DesktopApp.vue'
+// import DesktopApp from './DesktopPage.vue'
 
 const pid = kintone.$PLUGIN_ID
 
@@ -99,10 +99,6 @@ kintone.events.on('app.record.detail.show', async (event) => {
 })
 
 kintone.events.on('app.record.index.show', async (event) => {
-  // const config = kintone.plugin.app.getConfig(pid)
-  const spaceElement = kintone.app.getHeaderSpaceElement() as HTMLElement
-  const app = createApp(DesktopApp, { c: 'abcedfg' })
-  app.mount(spaceElement)
   const savedConfig: Array<{ label: string; checked: boolean; code: string }> = JSON.parse(
     kintone.plugin.app.getConfig(pid).setting,
   )

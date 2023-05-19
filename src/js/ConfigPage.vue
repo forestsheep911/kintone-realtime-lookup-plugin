@@ -19,13 +19,6 @@
 import { reactive, onMounted } from 'vue'
 import { getFormSetting, Lookup } from './lookup.ts'
 
-// type AddCheck<T> = {
-//   [P in keyof T]: T[P]
-//   checkedd? : string
-// }
-
-// type LookupC = { label: string; code: string; lookup: object; checked?: boolean }
-
 const props = defineProps<{ pluginId: string }>()
 const data: { config: Lookup[]; saveConfig: Array<{ label: string; checked: boolean; code: string }> } = reactive({
   config: [],
@@ -33,22 +26,12 @@ const data: { config: Lookup[]; saveConfig: Array<{ label: string; checked: bool
 })
 onMounted(async () => {
   const gettedConfig = kintone.plugin.app.getConfig(props.pluginId)
-  // console.log(typeof gettedConfig)
-  // console.log(gettedConfig)
-  // console.log(gettedConfig.setting)
   data.saveConfig = JSON.parse(gettedConfig.setting)
   const res: Lookup[] = await getFormSetting()
-  // console.log(res[1].label)
-  // console.log(res.length)
-  // console.log({ gettedConfig }.setting.length)
-  // const parsedConfig = JSON.parse(gettedConfig) as { setting: Array<{ label: string; checked: boolean }> }
-  // console.log({ gettedConfig })
   console.log(res)
 
   const cp = res.map((i) => {
     for (let j = 0; j < data.saveConfig.length; j += 1) {
-      // console.log('res', i.label)
-      // console.log('save', data.saveConfig[j].label)
       if (data.saveConfig[j].code === i.code) {
         return { code: i.code, label: i.label, checked: data.saveConfig[j].checked }
       }
@@ -57,8 +40,6 @@ onMounted(async () => {
   })
   console.log(cp)
   data.saveConfig = cp
-  // eslint-disable-next-line require-atomic-updates
-  // data.saveConfig = cp
 })
 
 function save() {

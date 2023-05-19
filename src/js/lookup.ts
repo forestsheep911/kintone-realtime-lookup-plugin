@@ -12,7 +12,7 @@ const client = new KintoneRestAPIClient({
 })
 
 export const getFormSetting = async () => {
-  const prop = (await client.app.getFormFields({ app: 63 })).properties
+  const prop = (await client.app.getFormFields({ app: kintone.app.getId() as number })).properties
   const lookUpFields = Object.values(prop).filter((f) => 'lookup' in f) as Lookup[]
   return lookUpFields
 }
