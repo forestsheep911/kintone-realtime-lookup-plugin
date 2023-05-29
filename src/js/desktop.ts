@@ -76,11 +76,9 @@ kintone.events.on('app.record.detail.show', async (event) => {
           spanEle.textContent = targetRecord?.record[els.lookup.relatedKeyField].value as string
           // 其他要复制的字段也要把参照值复制过来
           // 写在这个if下的原因是，如果lookup的值不是参照来的，那为了数据一致性，其他要赋值的字段最好也不要显示参照的值
-          console.log(els.lookup.fieldMappings)
           els.lookup.fieldMappings.map((mapping) => {
             // 拿到参照字段的元素
             const refEl = (kintone.app.record.getFieldElement(mapping.field) as HTMLElement).firstChild
-            console.log(refEl)
             if (!refEl || !refEl.textContent) return null
             // 拿到要复制的值
             const overwriteValue = targetRecord?.record[mapping.relatedField].value
