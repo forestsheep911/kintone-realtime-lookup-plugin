@@ -1,4 +1,5 @@
 <template>
+  <!-- 一个循环获取Lookup字段的模板 -->
   <div v-for="i in data.saveConfig" :key="i.label" class="config-row">
     <span class="toggle-wrapper">
       <input :id="`css${i.label}`" v-model="i.checked" type="checkbox" />
