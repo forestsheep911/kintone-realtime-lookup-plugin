@@ -20,7 +20,9 @@
 import { reactive, onMounted } from 'vue'
 import { getFormSetting, Lookup } from './lookup.ts'
 
+// 接受外面传递过来的pluginId
 const props = defineProps<{ pluginId: string }>()
+// 用到的数据声明，并且是响应式的
 const data: { config: Lookup[]; saveConfig: Array<{ label: string; checked: boolean; code: string }> } = reactive({
   config: [],
   saveConfig: [],
@@ -28,9 +30,9 @@ const data: { config: Lookup[]; saveConfig: Array<{ label: string; checked: bool
 onMounted(async () => {
   const gettedConfig = kintone.plugin.app.getConfig(props.pluginId)
   data.saveConfig = JSON.parse(gettedConfig.setting)
+  // 拿到所有是Lookup的字段
   const res: Lookup[] = await getFormSetting()
-  console.log(res)
-
+  // 比对上次保存的结果，并确定哪些勾选哪些不勾选
   const cp = res.map((i) => {
     for (let j = 0; j < data.saveConfig.length; j += 1) {
       if (data.saveConfig[j].code === i.code) {
@@ -39,19 +41,21 @@ onMounted(async () => {
     }
     return { code: i.code, label: i.label, checked: false }
   })
-  console.log(cp)
   data.saveConfig = cp
 })
 
+// 按下保存按钮时的操作：用plugin的API来保存到kintone内
 function save() {
   kintone.plugin.app.setConfig({ setting: JSON.stringify(data.saveConfig) })
 }
 
+// 按下取消按钮时的操作：退回到plugin默认页面
 function cancel() {
   window.location.href = `../../${kintone.app.getId()}/plugin/`
 }
 </script>
 
+// 引入css
 <style>
 @import '../css/config.css';
 </style>

@@ -1,9 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 import { KintoneRestAPIClient } from '@kintone/rest-api-client'
-// import { createApp } from 'vue'
 import { getFormSetting, Lookup } from './lookup.ts'
-// import DesktopApp from './DesktopPage.vue'
 
 const pid = kintone.$PLUGIN_ID
 
@@ -36,6 +34,7 @@ async function getTargetRecord(targetApp: string, hle: HTMLAnchorElement) {
   return targetRecord
 }
 
+// 在详细页面做的事
 kintone.events.on('app.record.detail.show', async (event) => {
   // 先拿到插件的设定，表示哪些lookup字段需要适用实时参照功能
   const savedConfig: Array<{ label: string; checked: boolean; code: string }> = JSON.parse(
@@ -54,7 +53,6 @@ kintone.events.on('app.record.detail.show', async (event) => {
     }
     return undefined
   })
-  console.log(enabledLookupSetting)
   // 对这些lookup字段们进行循环
   for (let i = 0; i < enabledLookupSetting.length; i += 1) {
     // 简化变量名且帮助ts检查空
@@ -96,6 +94,7 @@ kintone.events.on('app.record.detail.show', async (event) => {
   return event
 })
 
+// 在列表页面要做的事
 kintone.events.on('app.record.index.show', async (event) => {
   const savedConfig: Array<{ label: string; checked: boolean; code: string }> = JSON.parse(
     kintone.plugin.app.getConfig(pid).setting,
@@ -113,11 +112,12 @@ kintone.events.on('app.record.index.show', async (event) => {
     const els = enabledLookupSetting[i]
     if (els) {
       const code = els.code as string
+      // 拿到表格中的td元素们
       const tdEls = kintone.app.getFieldElements(code)
       tdEls?.map(async (tdEl) => {
         const anchorEl = tdEl.querySelector('a') as HTMLAnchorElement
         const targetRecord = await getTargetRecord(els.lookup.relatedApp.app, anchorEl)
-        console.log(targetRecord)
+        // Lookup元素的值改为关联字段的值
         anchorEl?.textContent &&
           (anchorEl.textContent = targetRecord?.record[els.lookup.relatedKeyField].value as string)
       })
